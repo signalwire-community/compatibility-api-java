@@ -1,0 +1,79 @@
+package io.github.olajhidey.model.call;
+
+import java.util.List;
+
+public class CallResponse {
+    private String uri;
+    private String first_page_uri;
+    private String next_page_uri;
+    private String previous_page_uri;
+    private int page;
+    private int page_size;
+    private List<Call> calls;
+
+    public CallResponse(String uri, String first_page_uri, String next_page_uri, String previous_page_uri, int page, int page_size, List<Call> calls) {
+        this.uri = uri;
+        this.first_page_uri = first_page_uri;
+        this.next_page_uri = next_page_uri;
+        this.previous_page_uri = previous_page_uri;
+        this.page = page;
+        this.page_size = page_size;
+        this.calls = calls;
+    }
+
+    public String getUri() {
+        return uri;
+    }
+
+    public void setUri(String uri) {
+        this.uri = uri;
+    }
+
+    public String getFirst_page_uri() {
+        return first_page_uri;
+    }
+
+    public void setFirst_page_uri(String first_page_uri) {
+        this.first_page_uri = first_page_uri;
+    }
+
+    public String getNext_page_uri() {
+        return next_page_uri;
+    }
+
+    public void setNext_page_uri(String next_page_uri) {
+        this.next_page_uri = next_page_uri;
+    }
+
+    public String getPrevious_page_uri() {
+        return previous_page_uri;
+    }
+
+    public void setPrevious_page_uri(String previous_page_uri) {
+        this.previous_page_uri = previous_page_uri;
+    }
+
+    public int getPage() {
+        return page;
+    }
+
+    public void setPage(int page) {
+        this.page = page;
+    }
+
+    public int getPage_size() {
+        return page_size;
+    }
+
+    public void setPage_size(int page_size) {
+        this.page_size = page_size;
+    }
+
+    public List<Call> getCalls() {
+        return calls;
+    }
+
+    public void setCalls(List<Call> calls) {
+        this.calls = calls;
+    }
+}
