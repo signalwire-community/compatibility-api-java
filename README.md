@@ -1,9 +1,13 @@
-# compatibility-api-java
+# Java Wrapper for SignalWire Compatibility APIs
 
 An Unofficial Java API wrapper that allows for the rapid development and integration of Java-based applications with the SignalWire
 API.
 
-signalwire-java automates the process of consuming the Signalwire API by providing a wide range of helper methods that
+> ⚠️ Disclaimer:
+> 
+> The libraries in this repository are NOT supported by SignalWire. SignalWire will _not_ answer support questions about the code in this repository, and is not responsible for fixing issues.
+
+This library automates the process of consuming the Signalwire API by providing a wide range of helper methods that
 allow for quick development and testing.
 
 ## Documentation
