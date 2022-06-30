@@ -12,14 +12,5 @@ public class AppTest {
     /**
      * Rigorous Test :-)
      */
-    @Test
-    public void shouldAnswerWithTrue() {
-        assertTrue(true);
-    }
-
-    public static SignalWireClient getClient() {
-        SignalWireClient client = new SignalWireClient("PROJECT-ID", "API-TOKEN-ID", "SPACE-NAME");
-        return client;
-    }
 
 }
