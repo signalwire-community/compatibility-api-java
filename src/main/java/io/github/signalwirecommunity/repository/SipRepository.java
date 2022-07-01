@@ -29,7 +29,7 @@ public class SipRepository {
      * The endpoints are returned sorted by creation date, with the most recent endpoints appearing first.
      * The list is filterable by sending in any of the following parameters.
      *
-     * @return
+     * @return SipResponse
      */
     public SipResponse list() {
 
@@ -57,14 +57,14 @@ public class SipRepository {
     /**
      * To create a new SIP Endpoint, you send a POST request to the SIP Endpoint resource.
      *
-     * @param username
-     * @param password
-     * @param caller_id
-     * @param send_as
-     * @param ciphers
-     * @param codecs
-     * @param encryption
-     * @return
+     * @param username Username of the SIP endpoint
+     * @param password password of the SIP profile
+     * @param caller_id caller id of the SIP profile
+     * @param send_as Value to send as
+     * @param ciphers list of ciphers while creating the SIP
+     * @param codecs list of codecs needed while creating the SIP
+     * @param encryption Encryption of your
+     * @return Sip
      */
     public SipResponse.Sip create(String username, String password, String caller_id, String send_as, List<String> ciphers, List<String> codecs, String encryption) {
 
@@ -102,8 +102,8 @@ public class SipRepository {
      * Retrieves the details of a SIP Endpoint that has been previously created.
      * Use the unique ID that was returned from your previous request to identify the specific SIP Endpoint.
      *
-     * @param id
-     * @return
+     * @param id unique ID of the SIP
+     * @return Sip
      */
     public SipResponse.Sip get(String id) {
         try {
@@ -130,15 +130,15 @@ public class SipRepository {
     /**
      * Updates the specific SIP Endpoint by setting the values of any parameters passed in. Any parameters not provided will be unchanged.
      *
-     * @param id
-     * @param username
-     * @param password
-     * @param caller_id
-     * @param send_as
-     * @param ciphers
-     * @param codecs
-     * @param encryption
-     * @return
+     * @param id unique id of the SIP endpoint
+     * @param username Username of the SIP endpoint
+     * @param password password of the SIP profile
+     * @param caller_id caller id of the SIP profile
+     * @param send_as Value to send as
+     * @param ciphers list of ciphers while creating the SIP
+     * @param codecs list of codecs needed while creating the SIP
+     * @param encryption Encryption of your
+     * @return Sip
      */
     public SipResponse.Sip update(String id, String username, String password, String caller_id, String send_as, List<String> ciphers, List<String> codecs, String encryption) {
 
@@ -176,8 +176,8 @@ public class SipRepository {
      * Permanently deletes a SIP Endpoint. It cannot be undone.
      * Will reject any audio or video from currently registered devices and deregister any connections.
      *
-     * @param id
-     * @return
+     * @param id unique id of the SIP
+     * @return SuccessResponse
      */
     public SuccessResponse delete(String id) {
         try {

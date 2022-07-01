@@ -29,7 +29,7 @@ public class AccountRepository implements AccountInterface {
     /**
      * Get all accounts using the project ID
      *
-     * @return
+     * @return AccountResponse
      */
     @Override
     public AccountResponse getAccounts() {
@@ -51,8 +51,8 @@ public class AccountRepository implements AccountInterface {
     /**
      * Get the Account information by friendlyName
      *
-     * @param friendlyName
-     * @return
+     * @param friendlyName Name registered on the account
+     * @return AccountResponse
      */
     @Override
     public AccountResponse getAccountByName(String friendlyName) {
@@ -81,8 +81,8 @@ public class AccountRepository implements AccountInterface {
     /**
      * Get an account information using the SID
      *
-     * @param sid
-     * @return
+     * @param sid unique account SID
+     * @return Account
      */
     @Override
     public Account getAccountBySid(String sid) {

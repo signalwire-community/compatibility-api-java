@@ -1,9 +1,5 @@
 package io.github.signalwirecommunity.model.account;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
-
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class Account {
 
     public String sid;
@@ -18,7 +14,17 @@ public class Account {
     public SubResource subresource_uris;
     public Boolean subproject;
 
-    public Account(@JsonProperty("sid") String sid, @JsonProperty("friendly_name") String friendly_name, @JsonProperty("status") String status, @JsonProperty("auth_token") String auth_token, @JsonProperty("date_created") String date_created, @JsonProperty("date_updated") String date_updated, @JsonProperty("type") String type, @JsonProperty("owner_account_sid") String owner_account_sid, @JsonProperty("uri") String uri, @JsonProperty("subresource_uris") SubResource subresource_uris, @JsonProperty("subproject") Boolean subproject) {
+    public Account( String sid,
+                    String friendly_name,
+                    String status,
+                    String auth_token,
+                    String date_created,
+                    String date_updated,
+                    String type,
+                    String owner_account_sid,
+                    String uri,
+                    SubResource subresource_uris,
+                    Boolean subproject) {
         this.sid = sid;
         this.friendly_name = friendly_name;
         this.status = status;

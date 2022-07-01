@@ -1,11 +1,8 @@
 package io.github.signalwirecommunity.model.account;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.List;
 
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class AccountResponse {
 
     public String uri;
@@ -16,7 +13,13 @@ public class AccountResponse {
     public int page_size;
     public List<Account> accounts;
 
-    public AccountResponse(@JsonProperty("uri") String uri, @JsonProperty("first_page_uri") String first_page_uri, @JsonProperty("next_page_uri") String next_page_uri, @JsonProperty("previous_page_uri") String previous_page_uri, @JsonProperty("page") int page, @JsonProperty("page_size") int page_size, @JsonProperty("accounts") List<Account> accounts) {
+    public AccountResponse(String uri,
+                           String first_page_uri,
+                           String next_page_uri,
+                           String previous_page_uri,
+                           int page,
+                           int page_size,
+                           List<Account> accounts) {
         this.uri = uri;
         this.first_page_uri = first_page_uri;
         this.next_page_uri = next_page_uri;

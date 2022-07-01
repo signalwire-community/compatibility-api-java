@@ -52,12 +52,12 @@ public class MessageResponse {
         }
 
         /**
-         * The <Message> verb sends an SMS or MMS message to a phone number.
+         * The Message verb sends an SMS or MMS message to a phone number.
          *
-         * @Link https://developer.signalwire.com/compatibility-api/reference/message#send-an-image-with-your-message-mms
-         * @param messageAttribute
-         * @param text
-         * @return
+         * https://developer.signalwire.com/compatibility-api/reference/message#send-an-image-with-your-message-mms
+         * @param messageAttribute xml attribute while creating verb
+         * @param text value of the verb
+         * @return Builder
          */
         @Override
         public Builder message(HashMap<String, String> messageAttribute, String text) {
@@ -82,14 +82,14 @@ public class MessageResponse {
         }
 
         /**
-         * dd a picture to the message by specifying a URL with a nested <Media> noun.
-         * The <Body> noun is optional if you are sending media and you do not want to send text with your media in the message.
+         * dd a picture to the message by specifying a URL with a nested Media noun.
+         * The Body noun is optional if you are sending media and you do not want to send text with your media in the message.
          *
-         * @Link https://developer.signalwire.com/compatibility-api/reference/message#send-an-image-with-your-message-mms
-         * @param messageAttribute
-         * @param body
-         * @param mediaUrl
-         * @return
+         * https://developer.signalwire.com/compatibility-api/reference/message#send-an-image-with-your-message-mms
+         * @param messageAttribute xml attribute while creating verb
+         * @param body body of the verb
+         * @param mediaUrl url to media file
+         * @return Builder
          */
         @Override
         public Builder messageWithMedia(HashMap<String, String> messageAttribute, String body, String mediaUrl) {
@@ -126,12 +126,12 @@ public class MessageResponse {
         }
 
         /**
-         * The <Redirect> verb transfers control from the current document to another.
-         * It is effectively an exit statement from the current document, as there is no way to return to any instructions listed after the <Redirect> verb.
+         * The Redirect verb transfers control from the current document to another.
+         * It is effectively an exit statement from the current document, as there is no way to return to any instructions listed after the Redirect verb.
          *
-         * @param url
-         * @return
-         * @LInk https://developer.signalwire.com/compatibility-api/reference/redirect-1
+         * @param url url to redirect call
+         * @return Builder
+         * https://developer.signalwire.com/compatibility-api/reference/redirect-1
          */
         @Override
         public Builder redirect(String url) {

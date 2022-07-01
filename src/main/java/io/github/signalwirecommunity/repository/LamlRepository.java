@@ -34,7 +34,7 @@ public class LamlRepository implements XMLInterface {
      * Returns a list of your XML Bins.
      * The Bins are returned sorted by creation date, with the most recent appearing first
      *
-     * @return
+     * @return LamlResponse
      */
     @Override
     public LamlResponse list() {
@@ -61,8 +61,8 @@ public class LamlRepository implements XMLInterface {
     /**
      * Get list of xml bins by friendly name
      *
-     * @param friendlyName
-     * @return
+     * @param friendlyName name of xml to be queried
+     * @return LamlResponse
      */
     @Override
     public LamlResponse list(String friendlyName) {
@@ -122,7 +122,7 @@ public class LamlRepository implements XMLInterface {
     /**
      * Retrieve a particular xml bin by ID
      *
-     * @return
+     * @return Bin
      */
     public Bin get(String sid) {
         try {
@@ -149,10 +149,10 @@ public class LamlRepository implements XMLInterface {
     /**
      * Update an XML by ID
      *
-     * @param sid
-     * @param name
-     * @param contents
-     * @return
+     * @param sid unique SID for the bin
+     * @param name friendly name of the created bin
+     * @param contents full contents and xml values of the bin
+     * @return Bin
      */
     @Override
     public Bin update(String sid, String name, String contents) {
@@ -188,8 +188,8 @@ public class LamlRepository implements XMLInterface {
     /**
      * Delete an XML bin by ID
      *
-     * @param sid
-     * @return
+     * @param sid unique SID for the bin
+     * @return SuccessResponse
      */
     @Override
     public SuccessResponse delete(String sid) {

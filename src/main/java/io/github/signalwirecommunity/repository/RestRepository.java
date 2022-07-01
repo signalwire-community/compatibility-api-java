@@ -25,6 +25,8 @@ public class RestRepository {
     /**
      * This endpoint allows you to look up validity and formatting information about a number.
      * You can optionally lookup additional information about the number such as carrier and caller ID data.
+     * @param phoneNumber Phone number to look up
+     * @return LookUp
      */
     public LookUp phoneLookUp(String phoneNumber) {
         if (phoneNumber != null) {
@@ -52,7 +54,8 @@ public class RestRepository {
     /**
      * Multi-factor authentication
      *
-     * @param type
+     * @param type type of Multifactor authentication 1 for sms and 2 for voice
+     * @return MfaResponse
      */
     public MfaResponse sendMfa(int type, String to, String from, String message) {
 
@@ -120,7 +123,7 @@ public class RestRepository {
     /**
      * Returns a list of your Verified Caller IDs. The caller IDs are returned sorted by creation date, with the most recent caller IDs appearing first.
      *
-     * @return
+     * @return VerifyCaller
      */
     public VerifyCaller listVerifyCallerIds() {
         try {
@@ -141,10 +144,10 @@ public class RestRepository {
     /**
      * To send a verification call to a number, you send a POST request to the Verified Caller ID resource.
      *
-     * @param name
-     * @param extension
-     * @param number
-     * @return
+     * @param name Name of the call numbeer
+     * @param extension Extension of the phone number
+     * @param number Phone number
+     * @return CallerId
      */
     public VerifyCaller.CallerId createCallerId(String name, String extension, String number) {
 
@@ -175,8 +178,8 @@ public class RestRepository {
      * To retrieve an existing Verified Caller ID, you send a GET request to the Verified Caller ID resource.
      * Use the unique ID that was returned from your previous request to identify the specific Verified Caller ID.
      *
-     * @param id
-     * @return
+     * @param id id of the caller Id
+     * @return CallerId
      */
     public VerifyCaller.CallerId getCallerId(String id) {
         try{
@@ -201,9 +204,9 @@ public class RestRepository {
 
     /**
      * o update an existing Verified Caller ID, you send a `PUT request to the Verified Caller ID resource. Any parameters not passed in will remain unchanged.
-     * @param id
-     * @param name
-     * @return
+     * @param id id of the callerID
+     * @param name name of the callerId
+     * @return CallerId
      */
     public VerifyCaller.CallerId updateCallerId(String id, String name) {
 
@@ -235,8 +238,8 @@ public class RestRepository {
     /**
      * Permanently deletes a Verified Caller ID. You will no longer be able to place calls from this phone number.
      *
-     * @param id
-     * @return
+     * @param id unique id of the callerId
+     * @return SuccessResponse
      */
 
     public SuccessResponse deleteCallerId(String id) {
@@ -265,9 +268,9 @@ public class RestRepository {
     /**
      * Supplies the verification code that was read during the verification call.
      *
-     * @param id
-     * @param verification_code
-     * @return
+     * @param id unique id of the Verification ID
+     * @param verification_code  code sent to either sms or phone
+     * @return CalleriD
      */
     public VerifyCaller.CallerId validateCallerId(String id, String verification_code) {
 

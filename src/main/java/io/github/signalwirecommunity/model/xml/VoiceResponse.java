@@ -56,11 +56,11 @@ public class VoiceResponse {
         List<Element> listOfElement = new ArrayList<>();
 
         /**
-         * The <Denoise> verb enables or disables noise reduction for call audio inbound to signalwire.
+         * The Denoise verb enables or disables noise reduction for call audio inbound to signalwire.
          * It reduces noise on calls before dailing into a conference or forwarding to another number.
          *
-         * @param type
-         * @return
+         * @param type The type of noise 1 for "on" and 2 for "off"
+         * @return Builder
          */
         @Override
         public Builder deniose(int type) {
@@ -81,13 +81,13 @@ public class VoiceResponse {
         }
 
         /**
-         * The <Dial> verb connects an existing call to another phone number.
-         * <Dial> will end this new call if: the called number does not answer, the number does not exist, or SignalWire receives a busy signal.
+         * The Dial verb connects an existing call to another phone number.
+         * Dial will end this new call if: the called number does not answer, the number does not exist, or SignalWire receives a busy signal.
          *
-         * @param dialAttribute
-         * @param phone
-         * @return
-         * @link https://developer.signalwire.com/compatibility-api/reference/dial
+         * @param dialAttribute additional attribute needed to create a verb
+         * @param phone value of the phone number
+         * @return Builder
+         * https://developer.signalwire.com/compatibility-api/reference/dial
          */
         @Override
         public Builder dial(HashMap<String, String> dialAttribute, String phone) {
@@ -111,14 +111,14 @@ public class VoiceResponse {
         }
 
         /**
-         * <Dial> verb's <Number> noun specifies what phone number to dial. You can use up to 10 <Number>s within a <Dial> to simultaneously call several people.
+         * Dial verb's Number noun specifies what phone number to dial. You can use up to 10 Number's within a Dial to simultaneously call several people.
          * The first person to answer the call will be connected to the caller and the rest of the called numbers will be hung up.
          *
-         * @param dialAttribute
-         * @param phoneNumber
-         * @param numberAttribute
-         * @return
-         * @link https://developer.signalwire.com/compatibility-api/reference/number-noun
+         * @param dialAttribute additional attribute needed while creating the dial tag
+         * @param phoneNumber phone number (E164 format)
+         * @param numberAttribute additional attribute needed while creating the number tag
+         * @return Builder
+         * https://developer.signalwire.com/compatibility-api/reference/number-noun
          */
         @Override
         public Builder dialWithNumberBin(HashMap<String, String> dialAttribute, String phoneNumber, HashMap<String, String> numberAttribute) {
@@ -161,9 +161,9 @@ public class VoiceResponse {
         /**
          * Using the Number bin to dial multiple numbers
          *
-         * @param dialAttribute
-         * @param phoneNumber
-         * @return
+         * @param dialAttribute additional attribute needed while creating the dial tag
+         * @param phoneNumber phone number (E164 format)
+         * @return Builder
          */
         @Override
         public Builder dialWithNumberBin(HashMap<String, String> dialAttribute, List<String> phoneNumber) {
@@ -193,13 +193,13 @@ public class VoiceResponse {
         }
 
         /**
-         * <Dial> verb's <Sip> noun permits the set up of VoIP sessions using SIP (Session Initiation Protocol). You can send a call to any SIP endpoint.
+         * Dial verb's Sip noun permits the set up of VoIP sessions using SIP (Session Initiation Protocol). You can send a call to any SIP endpoint.
          *
-         * @param dialAttribute
-         * @param destination
-         * @param sipAttribute
-         * @return
-         * @link https://developer.signalwire.com/compatibility-api/reference/sip-noun
+         * @param dialAttribute additional attribute needed while creating the dial tag
+         * @param destination destination phone number (E164 format)
+         * @param sipAttribute additional attribute needed while creating the sip tag
+         * @return Builder
+         * for more information https://developer.signalwire.com/compatibility-api/reference/sip-noun
          */
         @Override
         public Builder dialWithSIPBin(HashMap<String, String> dialAttribute, String destination, HashMap<String, String> sipAttribute) {
@@ -241,13 +241,13 @@ public class VoiceResponse {
         }
 
         /**
-         * <Dial> verb's <Queue> noun specifies what queue to dial
+         * Dial verb's Queue noun specifies what queue to dial
          *
-         * @param dialAttribute
-         * @param text
-         * @param queueAttribute
-         * @return
-         * @link https://developer.signalwire.com/compatibility-api/reference/queue-noun
+         * @param dialAttribute additional attribute needed while creating the dial tag
+         * @param text value of text sent along with the Queue tag
+         * @param queueAttribute additional attribute needed while creating the queue tag
+         * @return Builder
+         * https://developer.signalwire.com/compatibility-api/reference/queue-noun
          */
 
         @Override
@@ -289,13 +289,13 @@ public class VoiceResponse {
         }
 
         /**
-         * <Dial> verb's <Conference> noun allows the connection to a named conference room.
+         * Dial verb's Conference noun allows the connection to a named conference room.
          *
-         * @param dialAttribute
-         * @param text
-         * @param conferenceAttribute
-         * @return
-         * @link https://developer.signalwire.com/compatibility-api/reference/conference-noun
+         * @param dialAttribute additional attribute needed while creating the dial tag
+         * @param text value of text sent along with the Queue tag
+         * @param conferenceAttribute additional attribute needed while creating the queue tag
+         * @return Builder
+         * https://developer.signalwire.com/compatibility-api/reference/conference-noun
          */
         @Override
         public Builder dialWithConferenceBin(HashMap<String, String> dialAttribute, String text, HashMap<String, String> conferenceAttribute) {
@@ -353,13 +353,13 @@ public class VoiceResponse {
         }
 
         /**
-         * The <Enqueue> verb places a call in a specified call queue.
+         * The Enqueue verb places a call in a specified call queue.
          * If the specified queue does not exist, a new queue will be created and the call will be placed into that new queue.
          *
-         * @param enqueueAttr
-         * @param text
-         * @return
-         * @link https://developer.signalwire.com/compatibility-api/reference/enqueue
+         * @param enqueueAttr additional attribute needed while creating the enqueue tag
+         * @param text value to be added in the Enqueue tag
+         * @return Builder
+         * https://developer.signalwire.com/compatibility-api/reference/enqueue
          */
         @Override
         public Builder enqueue(HashMap<String, String> enqueueAttr, String text) {
@@ -439,10 +439,10 @@ public class VoiceResponse {
 
 
         /**
-         * The <Hangup> verb ends a call.
+         * The Hangup verb ends a call.
          *
-         * @return
-         * @Link https://developer.signalwire.com/compatibility-api/reference/hangup
+         * @return Builder
+         * https://developer.signalwire.com/compatibility-api/reference/hangup
          */
         @Override
         public Builder hangup() {
@@ -455,10 +455,10 @@ public class VoiceResponse {
         }
 
         /**
-         * The <Leave> verb transfers a call out of the queue containing that call.
+         * The Leave verb transfers a call out of the queue containing that call.
          *
-         * @return
-         * @Link https://developer.signalwire.com/compatibility-api/reference/leave
+         * @return Builder
+         * https://developer.signalwire.com/compatibility-api/reference/leave
          */
         @Override
         public Builder leave() {
@@ -469,11 +469,11 @@ public class VoiceResponse {
         }
 
         /**
-         * The <Pause> verb waits silently for a distinctive number of seconds.
+         * The Pause verb waits silently for a distinctive number of seconds.
          *
-         * @link https://developer.signalwire.com/compatibility-api/reference/pause
-         * @param length
-         * @return
+         * https://developer.signalwire.com/compatibility-api/reference/pause
+         * @param length length of the pause
+         * @return Builder
          */
         @Override
         public Builder pause(String length) {
@@ -491,12 +491,12 @@ public class VoiceResponse {
         }
 
         /**
-         * The <Play> verb plays an audio file, which SignalWire fetches from the URL you configured, back to the caller.
+         * The Play verb plays an audio file, which SignalWire fetches from the URL you configured, back to the caller.
          *
-         * @Link https://developer.signalwire.com/compatibility-api/reference/play
-         * @param playAttr
-         * @param url
-         * @return
+         * https://developer.signalwire.com/compatibility-api/reference/play
+         * @param playAttr additional attribute needed while creating the play tag
+         * @param url value representing the url to be played
+         * @return Builder
          */
         @Override
         public Builder play(HashMap<String, String> playAttr, String url) {
@@ -523,11 +523,11 @@ public class VoiceResponse {
 
 
         /**
-         * The <Record> verb creates an audio file with the caller's voice and returns the URL to you.
+         * The Record verb creates an audio file with the caller's voice and returns the URL to you.
          * Text transcriptions of these recorded calls can also be produced.
          *
-         * @Link https://developer.signalwire.com/compatibility-api/reference/record
-         * @return
+         * https://developer.signalwire.com/compatibility-api/reference/record
+         * @return Builder
          */
         @Override
         public Builder record(HashMap<String, String> recordAttribute) {
@@ -549,12 +549,12 @@ public class VoiceResponse {
         }
 
         /**
-         * The <Redirect> verb transfers control from the current call to another.
+         * The Redirect verb transfers control from the current call to another.
          * It is effectively an exit statement from the current call, as there is no way to return to any instructions listed after the verb.
          *
-         * @Link https://developer.signalwire.com/compatibility-api/reference/redirect
-         * @param url
-         * @return
+         * https://developer.signalwire.com/compatibility-api/reference/redirect
+         * @param url Link to call to beb redirected to
+         * @return Builder
          */
         @Override
         public Builder redirect(String url) {
@@ -565,12 +565,12 @@ public class VoiceResponse {
         }
 
         /**
-         * The <Refer> verb transfers a SIP call in SignalWire to a transfer target using the SIP REFER method.
+         * The Refer verb transfers a SIP call in SignalWire to a transfer target using the SIP REFER method.
          *
-         * @link https://developer.signalwire.com/compatibility-api/reference/refer#examples
-         * @param referAttribute
-         * @param sipAddress
-         * @return
+         * https://developer.signalwire.com/compatibility-api/reference/refer#examples
+         * @param referAttribute additional attribute needed while creating the refer tag
+         * @param sipAddress value of the Sip address
+         * @return Builder
          */
         @Override
         public Builder refer(HashMap<String, String > referAttribute, String sipAddress) {
@@ -596,12 +596,12 @@ public class VoiceResponse {
         }
 
         /**
-         * The <Reject> verb rejects a call to your SignalWire number.
-         * It is effectively an exit statement from the current document, as there is no way to return to any instructions listed after the <Reject> verb.
+         * The Reject verb rejects a call to your SignalWire number.
+         * It is effectively an exit statement from the current document, as there is no way to return to any instructions listed after the Reject verb.
          *
-         * @Link https://developer.signalwire.com/compatibility-api/reference/reject
-         * @param reason
-         * @return
+         * https://developer.signalwire.com/compatibility-api/reference/reject
+         * @param reason Value to the reason to reject the call
+         * @return Builder
          */
         @Override
         public Builder reject(String reason) {
@@ -620,12 +620,12 @@ public class VoiceResponse {
         }
 
         /**
-         * The <Say> verb reads the supplied text back to the caller. It is useful for text that is difficult to pre-record.
+         * The Say verb reads the supplied text back to the caller. It is useful for text that is difficult to pre-record.
          *
-         * @Link https://developer.signalwire.com/compatibility-api/reference/say
-         * @param sayAttribute
-         * @param text
-         * @return
+         * https://developer.signalwire.com/compatibility-api/reference/say
+         * @param sayAttribute additional attribute needed while creating the say tag
+         * @param text value of content to say
+         * @return Builder
          */
         @Override
         public Builder say(HashMap<String, String> sayAttribute, String text) {
@@ -650,12 +650,12 @@ public class VoiceResponse {
         }
 
         /**
-         * The <Sms> verb sends an SMS message to a phone number during a phone call.
+         * The Sms verb sends an SMS message to a phone number during a phone call.
          *
-         * @link https://developer.signalwire.com/compatibility-api/reference/sms
-         * @param smsAttribute
-         * @param text
-         * @return
+         * https://developer.signalwire.com/compatibility-api/reference/sms
+         * @param smsAttribute additional attribute needed while creating the sms tag
+         * @param text Sms content to be sent to destination
+         * @return Builder
          */
         @Override
         public Builder sms(HashMap<String, String> smsAttribute, String text) {
@@ -680,11 +680,11 @@ public class VoiceResponse {
         }
 
         /**
-         * The <Stream> instruction makes it possible to send raw audio streams from a running phone call over WebSockets in near real time, to a specified URL
+         * The Stream instruction makes it possible to send raw audio streams from a running phone call over WebSockets in near real time, to a specified URL
          *
-         * @Link https://developer.signalwire.com/compatibility-api/reference/stream#websocket-messages
-         * @param streamAttribute
-         * @return
+         * https://developer.signalwire.com/compatibility-api/reference/stream#websocket-messages
+         * @param streamAttribute additional attribute needed while creating the stream tag
+         * @return Builder
          */
         @Override
         public Builder stream(HashMap<String, String> streamAttribute) {
@@ -712,9 +712,9 @@ public class VoiceResponse {
         /**
          * A stop message will be sent when the Stream is either stopped or the Call has ended.
          *
-         * @link https://developer.signalwire.com/compatibility-api/reference/stream#stopping-a-stream
-         * @param streamAttribute
-         * @return
+         * https://developer.signalwire.com/compatibility-api/reference/stream#stopping-a-stream
+         * @param streamAttribute additional attribute needed while creating the stop stream tag
+         * @return Builder
          */
         @Override
         public Builder stopStream(HashMap<String, String> streamAttribute) {
