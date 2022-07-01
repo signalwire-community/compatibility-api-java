@@ -9,7 +9,7 @@ public interface VoiceInterface {
 
     CallResponse calls();
 
-    Messages calls(
+    CallResponse calls(
             String endTime,
             String endTimeBefore,
             String endTimeAfter,

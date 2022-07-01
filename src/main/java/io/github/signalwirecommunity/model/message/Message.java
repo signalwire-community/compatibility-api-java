@@ -1,10 +1,8 @@
 package io.github.signalwirecommunity.model.message;
 
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
 
-@JsonIgnoreProperties(ignoreUnknown = true)
+
 public class Message {
     public final String api_version;
     public final String account_sid;
@@ -21,19 +19,19 @@ public class Message {
     public final String price;
 
     public Message(
-            @JsonProperty("api_version") String api_version,
-            @JsonProperty("account_sid") String account_sid,
-            @JsonProperty("body") String body,
-            @JsonProperty("status") String status,
-            @JsonProperty("to") String to,
-            @JsonProperty("from") String from,
-            @JsonProperty("price_unit") String price_unit,
-            @JsonProperty("sid") String sid,
-            @JsonProperty("date_created") String date_created,
-            @JsonProperty("date_sent") String date_sent,
-            @JsonProperty("date_updated") String date_updated,
-            @JsonProperty("direction") String direction,
-            @JsonProperty("price") String price) {
+            String api_version,
+            String account_sid,
+            String body,
+            String status,
+            String to,
+            String from,
+            String price_unit,
+            String sid,
+            String date_created,
+            String date_sent,
+            String date_updated,
+            String direction,
+            String price) {
         this.account_sid = account_sid;
         this.body = body;
         this.status = status;

@@ -43,7 +43,7 @@ public class PhoneRepository implements PhoneInterface {
     /**
      * Get all the phone numbers in the project specified
      *
-     * @return
+     * @return PhoneResponse
      */
     @Override
     public PhoneResponse getPhoneNumbers() {
@@ -68,8 +68,8 @@ public class PhoneRepository implements PhoneInterface {
     /**
      * Get list of phone numbers by the friendlyName
      *
-     * @param friendlyName
-     * @return
+     * @param friendlyName name to query
+     * @return PhoneResponse
      */
     @Override
     public PhoneResponse getPhoneNumbers(String friendlyName) {
@@ -100,8 +100,8 @@ public class PhoneRepository implements PhoneInterface {
     /**
      * Get list of phone number in a project by PhoneNumber
      *
-     * @param phoneNumber
-     * @return
+     * @param phoneNumber phone number to query
+     * @return PhoneResponse
      */
     @Override
     public PhoneResponse getPhoneNumber(String phoneNumber) {
@@ -131,8 +131,8 @@ public class PhoneRepository implements PhoneInterface {
     /**
      * Get List of phone number in the project by SID
      *
-     * @param sid
-     * @return
+     * @param sid unique SID of the phone number
+     * @return PhoneNumber
      */
     @Override
     public PhoneNumber getPhoneNumberBySid(String sid) {
@@ -161,8 +161,8 @@ public class PhoneRepository implements PhoneInterface {
     /**
      * Get list of Toll Free numbers by ISO country value
      *
-     * @param isoCountry
-     * @return
+     * @param isoCountry ISO value of the country
+     * @return NumberResponse
      */
     @Override
     public NumberResponse getTollFreeNumbers(String isoCountry) {
@@ -193,8 +193,8 @@ public class PhoneRepository implements PhoneInterface {
     /**
      * Get list of local numbers by ISO country
      *
-     * @param isoCountry
-     * @return
+     * @param isoCountry ISO value of the country
+     * @return NumberResponse
      */
     @Override
     public NumberResponse getLocalNumbers(String isoCountry) {
@@ -224,9 +224,9 @@ public class PhoneRepository implements PhoneInterface {
     /**
      * Create a new phone number by providing the areaCode and phoneNumber
      *
-     * @param areaCode
-     * @param phoneNumber
-     * @return
+     * @param areaCode areaCode of the phone number
+     * @param phoneNumber value of the phone number to purchase
+     * @return PhoneNumber
      */
     @Override
     public PhoneNumber createPhoneNumber(String areaCode, String phoneNumber) {
@@ -258,9 +258,9 @@ public class PhoneRepository implements PhoneInterface {
     /**
      * Create a phone number by adding additional params like statusCallback, statuscallbackMethod
      *
-     * @param areaCode
-     * @param phoneNumber
-     * @param statusCallBack
+     * @param areaCode areaCode of the phone number
+     * @param phoneNumber value of the phone number to purchase
+     * @param statusCallBack statuscallback link for progress in phone call
      * @return
      */
     @Override
@@ -295,9 +295,9 @@ public class PhoneRepository implements PhoneInterface {
     /**
      * Update a phone number by SID and make changes to the SMS url and voice URL
      *
-     * @param sid
-     * @param smsUrl
-     * @param voiceUrl
+     * @param sid unique SID for the phone call
+     * @param smsUrl SMS url information
+     * @param voiceUrl Voice url information
      * @return
      */
     @Override
@@ -334,9 +334,9 @@ public class PhoneRepository implements PhoneInterface {
     /**
      * Transfer a phone number from one space ID to another
      *
-     * @param sid
-     * @param accountId
-     * @return
+     * @param sid unique SID for the phone call
+     * @param accountId unique id for the project from your space
+     * @return PhoneNumber
      */
     @Override
     public PhoneNumber transferPhoneNumber(String sid, String accountId) {
@@ -371,8 +371,8 @@ public class PhoneRepository implements PhoneInterface {
     /**
      * Delete a phone number from the project or a Space
      *
-     * @param sid
-     * @return
+     * @param sid unique SID for the phone call
+     * @return SuccessResponse
      */
     @Override
     public SuccessResponse deletePhone(String sid) {

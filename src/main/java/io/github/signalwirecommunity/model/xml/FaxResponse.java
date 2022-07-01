@@ -53,11 +53,11 @@ public class FaxResponse {
         }
 
         /**
-         * The <Receive> verb tells SignalWire to receive an incoming fax, which results in the creation of a new Fax instance resource.
+         * The Receive verb tells SignalWire to receive an incoming fax, which results in the creation of a new Fax instance resource.
          *
-         * @param faxAttribute
-         * @return
-         * @Link https://developer.signalwire.com/compatibility-api/reference/receive
+         * @param faxAttribute list of attribute for the fax xml
+         * @return Builder
+         * https://developer.signalwire.com/compatibility-api/reference/receive
          */
         @Override
         public Builder receive(HashMap<String, String> faxAttribute) {
@@ -81,10 +81,10 @@ public class FaxResponse {
         }
 
         /**
-         * The <Reject> verb tells SignalWire to reject an incoming fax, which results in a status of canceled.
+         * The Reject verb tells SignalWire to reject an incoming fax, which results in a status of canceled.
          *
-         * @return
-         * @Link https://developer.signalwire.com/compatibility-api/reference/reject-1
+         * @return builder
+         * https://developer.signalwire.com/compatibility-api/reference/reject-1
          */
         @Override
         public Builder reject() {

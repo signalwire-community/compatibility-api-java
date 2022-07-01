@@ -33,8 +33,6 @@ public class VoiceRepository implements VoiceInterface {
 
     /**
      * Get all the voice calls in a particular project
-     *
-     * @return
      */
     @Override
     public CallResponse calls() {
@@ -57,29 +55,29 @@ public class VoiceRepository implements VoiceInterface {
     /**
      * Get all the calls using the below parameters
      *
-     * @param endTime
-     * @param endTimeBefore
-     * @param endTimeAfter
-     * @param from
-     * @param parentCallSid
-     * @param startTime
-     * @param startTimeBefore
-     * @param startTimeAfter
-     * @param status
-     * @param to
-     * @return
+     * @param endTime         end time
+     * @param endTimeBefore   end time before
+     * @param endTimeAfter    end time after
+     * @param from            phone number sending the call
+     * @param parentCallSid   parent call Sid
+     * @param startTime       start time
+     * @param startTimeBefore start time before
+     * @param startTimeAfter  start time after
+     * @param status          status of the message
+     * @param to              destination phone call
+     * @return CallResponse
      */
     @Override
-    public Messages calls(String endTime,
-                          String endTimeBefore,
-                          String endTimeAfter,
-                          String from,
-                          String parentCallSid,
-                          String startTime,
-                          String startTimeBefore,
-                          String startTimeAfter,
-                          String status,
-                          String to) {
+    public CallResponse calls(String endTime,
+                              String endTimeBefore,
+                              String endTimeAfter,
+                              String from,
+                              String parentCallSid,
+                              String startTime,
+                              String startTimeBefore,
+                              String startTimeAfter,
+                              String status,
+                              String to) {
 
         try {
             HttpUrl.Builder urlBuilder = HttpUrl.parse(baseUrl).newBuilder()
@@ -104,7 +102,7 @@ public class VoiceRepository implements VoiceInterface {
 
             String response = client.getClient().newCall(request).execute().body().string();
 
-            return gson.fromJson(response, Messages.class);
+            return gson.fromJson(response, CallResponse.class);
 
         } catch (Exception exception) {
             exception.printStackTrace();
@@ -117,19 +115,19 @@ public class VoiceRepository implements VoiceInterface {
     /**
      * Create a call using the belowing and following parameters
      *
-     * @param from
-     * @param to
-     * @param url
-     * @param record
-     * @param statusCallback
-     * @return
+     * @param from           phone number sending the call
+     * @param to             destination phone call
+     * @param url            url to bin of the phone call
+     * @param record         ask to record the phone call
+     * @param statusCallback link to status of the phone call
+     * @return Call
      */
     @Override
-    public io.github.signalwirecommunity.model.call.Call create(String from,
-                                                                String to,
-                                                                String url,
-                                                                Boolean record,
-                                                                String statusCallback) {
+    public Call create(String from,
+                       String to,
+                       String url,
+                       Boolean record,
+                       String statusCallback) {
 
         try {
 
@@ -162,11 +160,11 @@ public class VoiceRepository implements VoiceInterface {
     /**
      * Get information of a Call by using SID
      *
-     * @param sid
-     * @return
+     * @param sid unique id of the call
+     * @return Call
      */
     @Override
-    public io.github.signalwirecommunity.model.call.Call get(String sid) {
+    public Call get(String sid) {
 
         try {
 
@@ -194,15 +192,15 @@ public class VoiceRepository implements VoiceInterface {
     /**
      * Update the item of a call using the SID
      *
-     * @param sid
-     * @param url
-     * @param fallbackUrl
-     * @param status
-     * @param statusCallBack
-     * @return
+     * @param sid unique SID of the phone call
+     * @param url url of the call xml bin
+     * @param fallbackUrl fallback url if the call failed
+     * @param status status of the call
+     * @param statusCallBack link to get information on the status of your call
+     * @return Call
      */
     @Override
-    public io.github.signalwirecommunity.model.call.Call update(String sid, String url, String fallbackUrl, String status, String statusCallBack) {
+    public Call update(String sid, String url, String fallbackUrl, String status, String statusCallBack) {
 
         try {
             RequestBody formData = new FormBody.Builder()
@@ -233,8 +231,8 @@ public class VoiceRepository implements VoiceInterface {
     /**
      * Delete a call using the following parameter
      *
-     * @param sid
-     * @return
+     * @param sid unique SID of the call
+     * @return SuccessResponse
      */
     @Override
     public SuccessResponse delete(String sid) {

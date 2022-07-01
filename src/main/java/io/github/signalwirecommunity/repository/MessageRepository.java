@@ -24,11 +24,6 @@ public class MessageRepository implements MessageInterface {
     private String baseUrl;
     private Gson gson;
 
-    /**
-     * @param projectID
-     * @param apiToken
-     * @param spaceUrl
-     */
     public MessageRepository(String projectID, String apiToken, String spaceUrl) {
         this.projectId = projectID;
         this.apiToken = apiToken;
@@ -65,12 +60,12 @@ public class MessageRepository implements MessageInterface {
     /**
      * Get all messages using the following parameters
      *
-     * @param dateSent
-     * @param from
-     * @param to
-     * @param status
-     * @param pageSize
-     * @return
+     * @param dateSent date message was sent
+     * @param from Phone number sending the message (E164 format)
+     * @param to Destination phone number
+     * @param status Status of the phone number either failed, success or delivered
+     * @param pageSize size of results queried
+     * @return Messages
      */
     @Override
     public Messages getMessages(String dateSent, String from, String to, String status, String pageSize) {
@@ -106,10 +101,10 @@ public class MessageRepository implements MessageInterface {
     /**
      * Create a new phone number with the below parameters
      *
-     * @param to
-     * @param from
-     * @param body
-     * @return
+     * @param to Destination phone number (E164 format)
+     * @param from Phone number sending the message (E164 format)
+     * @param body body of the message
+     * @return NewMessageResponse
      */
 
     @Override
@@ -142,13 +137,13 @@ public class MessageRepository implements MessageInterface {
     /**
      * Create a new message with the following params
      *
-     * @param to
-     * @param from
-     * @param body
-     * @param mediaUrl
-     * @param statusCallback
-     * @param validityPeriod
-     * @return
+     * @param to Destination phone number
+     * @param from Phone number sending the message (E164 format)
+     * @param body body of the message
+     * @param mediaUrl media url if sending an MMS
+     * @param statusCallback monitor status of the message sent
+     * @param validityPeriod period of message validity
+     * @return NewMessageResponse
      */
     @Override
     public NewMessageResponse create(String to, String from, String body, String mediaUrl, String statusCallback, String validityPeriod) {
@@ -183,8 +178,8 @@ public class MessageRepository implements MessageInterface {
     /**
      * Get the item of a particular message by SID
      *
-     * @param sid
-     * @return
+     * @param sid unique SID for the phone call
+     * @return Message
      */
 
     @Override
@@ -207,9 +202,9 @@ public class MessageRepository implements MessageInterface {
     /**
      * Update a message by SID
      *
-     * @param sid
-     * @param body
-     * @return
+     * @param sid unique SID for the phone call
+     * @param body body of the message been sent
+     * @return NewMessageResponse
      */
 
     @Override
@@ -245,8 +240,8 @@ public class MessageRepository implements MessageInterface {
     /**
      * Delete a message from a space by SID
      *
-     * @param sid
-     * @return
+     * @param sid unique SID for the phone call
+     * @return SuccessResponse
      */
     @Override
     public SuccessResponse delete(String sid) {
