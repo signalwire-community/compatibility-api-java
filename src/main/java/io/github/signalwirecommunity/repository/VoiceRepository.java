@@ -6,11 +6,14 @@ import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
 import io.github.signalwirecommunity.endpoints.VoiceInterface;
 import io.github.signalwirecommunity.http.RestClient;
+import io.github.signalwirecommunity.http.constants.Constant;
 import io.github.signalwirecommunity.model.SuccessResponse;
 import io.github.signalwirecommunity.model.call.Call;
 import io.github.signalwirecommunity.model.call.CallResponse;
-import io.github.signalwirecommunity.model.message.Messages;
-import okhttp3.*;
+import okhttp3.HttpUrl;
+import okhttp3.Request;
+
+import java.util.Map;
 
 public class VoiceRepository implements VoiceInterface {
 
@@ -115,45 +118,35 @@ public class VoiceRepository implements VoiceInterface {
     /**
      * Create a call using the belowing and following parameters
      *
-     * @param from           phone number sending the call
-     * @param to             destination phone call
-     * @param url            url to bin of the phone call
-     * @param record         ask to record the phone call
-     * @param statusCallback link to status of the phone call
      * @return Call
      */
     @Override
-    public Call create(String from,
-                       String to,
-                       String url,
-                       Boolean record,
-                       String statusCallback) {
+    public Call create(Map<String, Object> callInfo) {
+
+        String response;
 
         try {
+            HttpResponse<JsonNode> request = Unirest.post(baseUrl)
+                    .basicAuth(projectId, apiToken)
+                    .header(Constant.ACCEPT, Constant.HEADER)
+                    .header(Constant.CONTENT, Constant.FORM_TYPE)
+                    .fields(callInfo)
+                    .asJson();
 
-            RequestBody formData = new FormBody.Builder()
-                    .add("From", from)
-                    .add("To", to)
-                    .add("Url", url)
-                    .add("Record", record.toString())
-                    .add("StatusCallback", statusCallback).build();
+            int status = request.getStatus();
 
+            response = request.getBody().toString();
 
-            Request request = new Request.Builder()
-                    .url(baseUrl)
-                    .post(formData)
-                    .addHeader("Accept", "application/json")
-                    .addHeader("Content-Type", "application/x-www-form-urlencoded")
-                    .build();
-
-            String response = client.getClient().newCall(request).execute().body().string();
-
-            return gson.fromJson(response, io.github.signalwirecommunity.model.call.Call.class);
+            if (status >= 200 && status <= 204) {
+                return gson.fromJson(response, Call.class);
+            }
 
         } catch (Exception exception) {
             exception.printStackTrace();
             return null;
         }
+
+        return null;
 
     }
 
@@ -192,35 +185,35 @@ public class VoiceRepository implements VoiceInterface {
     /**
      * Update the item of a call using the SID
      *
-     * @param sid unique SID of the phone call
-     * @param url url of the call xml bin
-     * @param fallbackUrl fallback url if the call failed
-     * @param status status of the call
-     * @param statusCallBack link to get information on the status of your call
+     * @param sid      unique SID of the phone call
+     * @param callInfo All call information from VoiceBuilder
      * @return Call
      */
     @Override
-    public Call update(String sid, String url, String fallbackUrl, String status, String statusCallBack) {
+    public Call update(String sid, Map<String, Object> callInfo) {
+
+        String response;
 
         try {
-            RequestBody formData = new FormBody.Builder()
-                    .add("Url", url)
-                    .add("FallbackUrl", fallbackUrl)
-                    .add("Status", status)
-                    .add("StatusCallback", statusCallBack)
-                    .build();
 
-            Request request = new Request.Builder()
-                    .url(baseUrl + "/" + sid)
-                    .put(formData)
-                    .addHeader("Accept", "application/json")
-                    .addHeader("Content-Type", "application/x-www-form-urlencoded")
-                    .build();
+            String url = baseUrl + "/" + sid;
 
+            HttpResponse<JsonNode> request = Unirest.post(url)
+                    .basicAuth(projectId, apiToken)
+                    .header(Constant.CONTENT, Constant.FORM_TYPE)
+                    .header(Constant.ACCEPT, Constant.HEADER)
+                    .fields(callInfo)
+                    .asJson();
 
-            String response = client.getClient().newCall(request).execute().body().toString();
+            int status = request.getStatus();
 
-            return gson.fromJson(response, Call.class);
+            response = request.getBody().toString();
+
+            System.out.println(response);
+
+            if (status >= 200 && status <= 204) {
+                return gson.fromJson(response, Call.class);
+            }
 
         } catch (Exception exception) {
             exception.printStackTrace();

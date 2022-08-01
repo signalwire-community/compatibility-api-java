@@ -5,6 +5,8 @@ import io.github.signalwirecommunity.model.call.Call;
 import io.github.signalwirecommunity.model.call.CallResponse;
 import io.github.signalwirecommunity.model.message.Messages;
 
+import java.util.Map;
+
 public interface VoiceInterface {
 
     CallResponse calls();
@@ -21,15 +23,11 @@ public interface VoiceInterface {
             String status,
             String to);
 
-    Call create(String from,
-                String to,
-                String url,
-                Boolean record,
-                String statusCallback);
+    Call create(Map<String, Object> callInfo);
 
     Call get(String sid);
 
-    Call update(String sid, String url, String fallbackUrl, String status, String statusCallBack);
+    Call update(String sid, Map<String, Object> callInfo);
 
     SuccessResponse delete(String sid);
 }
