@@ -9,7 +9,9 @@ import io.github.signalwirecommunity.http.RestClient;
 import io.github.signalwirecommunity.http.constants.Constant;
 import io.github.signalwirecommunity.model.SuccessResponse;
 import io.github.signalwirecommunity.model.call.Call;
+import io.github.signalwirecommunity.model.call.CallFilter;
 import io.github.signalwirecommunity.model.call.CallResponse;
+import io.github.signalwirecommunity.model.call.VoiceBuilder;
 import okhttp3.HttpUrl;
 import okhttp3.Request;
 
@@ -58,52 +60,21 @@ public class VoiceRepository implements VoiceInterface {
     /**
      * Get all the calls using the below parameters
      *
-     * @param endTime         end time
-     * @param endTimeBefore   end time before
-     * @param endTimeAfter    end time after
-     * @param from            phone number sending the call
-     * @param parentCallSid   parent call Sid
-     * @param startTime       start time
-     * @param startTimeBefore start time before
-     * @param startTimeAfter  start time after
-     * @param status          status of the message
-     * @param to              destination phone call
+     * @param filter Holds the parameter needed to query list of calls
      * @return CallResponse
      */
     @Override
-    public CallResponse calls(String endTime,
-                              String endTimeBefore,
-                              String endTimeAfter,
-                              String from,
-                              String parentCallSid,
-                              String startTime,
-                              String startTimeBefore,
-                              String startTimeAfter,
-                              String status,
-                              String to) {
+    public CallResponse calls(CallFilter filter) {
 
         try {
-            HttpUrl.Builder urlBuilder = HttpUrl.parse(baseUrl).newBuilder()
-                    .addQueryParameter("From", from)
-                    .addQueryParameter("To", to)
-                    .addQueryParameter("EndTime", endTime)
-                    .addQueryParameter("EndTime<", endTimeBefore)
-                    .addQueryParameter("EndTime>", endTimeAfter)
-                    .addQueryParameter("StartTime", startTime)
-                    .addQueryParameter("StartTime<", startTimeBefore)
-                    .addQueryParameter("StartTime>", startTimeAfter)
-                    .addQueryParameter("ParentCallSid", parentCallSid)
-                    .addQueryParameter("Status", status);
 
-            String url = urlBuilder.build().toString();
+            HttpResponse<JsonNode> client = Unirest.get(baseUrl)
+                    .basicAuth(this.projectId, this.apiToken)
+                    .header("Accept", "application/json")
+                    .queryString(filter.response)
+                    .asJson();
 
-            Request request = new Request.Builder()
-                    .url(url)
-                    .get()
-                    .addHeader("Accept", "application/json")
-                    .build();
-
-            String response = client.getClient().newCall(request).execute().body().string();
+            String response = client.getBody().toString();
 
             return gson.fromJson(response, CallResponse.class);
 
@@ -111,17 +82,15 @@ public class VoiceRepository implements VoiceInterface {
             exception.printStackTrace();
             return null;
         }
-
     }
 
-
     /**
-     * Create a call using the belowing and following parameters
+     * Create a call using the below and following parameters
      *
      * @return Call
      */
     @Override
-    public Call create(Map<String, Object> callInfo) {
+    public Call create(VoiceBuilder builder) {
 
         String response;
 
@@ -130,7 +99,7 @@ public class VoiceRepository implements VoiceInterface {
                     .basicAuth(projectId, apiToken)
                     .header(Constant.ACCEPT, Constant.HEADER)
                     .header(Constant.CONTENT, Constant.FORM_TYPE)
-                    .fields(callInfo)
+                    .fields(builder.getResponse())
                     .asJson();
 
             int status = request.getStatus();
@@ -145,9 +114,7 @@ public class VoiceRepository implements VoiceInterface {
             exception.printStackTrace();
             return null;
         }
-
         return null;
-
     }
 
     /**
@@ -190,7 +157,7 @@ public class VoiceRepository implements VoiceInterface {
      * @return Call
      */
     @Override
-    public Call update(String sid, Map<String, Object> callInfo) {
+    public Call update(String sid, VoiceBuilder callInfo) {
 
         String response;
 
@@ -202,14 +169,12 @@ public class VoiceRepository implements VoiceInterface {
                     .basicAuth(projectId, apiToken)
                     .header(Constant.CONTENT, Constant.FORM_TYPE)
                     .header(Constant.ACCEPT, Constant.HEADER)
-                    .fields(callInfo)
+                    .fields(callInfo.getResponse())
                     .asJson();
 
             int status = request.getStatus();
 
             response = request.getBody().toString();
-
-            System.out.println(response);
 
             if (status >= 200 && status <= 204) {
                 return gson.fromJson(response, Call.class);
