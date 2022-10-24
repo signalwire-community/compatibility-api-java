@@ -3,11 +3,9 @@ package io.github.signalwirecommunity;
 import io.github.signalwirecommunity.repository.*;
 
 public class SignalWireClient {
-
     private final String projectID;
     private final String apiToken;
     private final String spaceName;
-
     public SignalWireClient(String projectID, String apiToken, String spaceName) {
         this.projectID = projectID;
         this.apiToken = apiToken;
