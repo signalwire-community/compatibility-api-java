@@ -5,7 +5,6 @@ API.
 
 > ⚠️ Disclaimer:
 >
-> 
 > The libraries in this repository are NOT supported by SignalWire. SignalWire will _not_ answer support questions about the code in this repository, and is not responsible for fixing issues.
 
 This library automates the process of consuming the Signalwire API by providing a wide range of helper methods that
@@ -24,7 +23,7 @@ found [here](https://developer.signalwire.com/compatibility-api/reference/overvi
 <dependency>
     <groupId>io.github.signalwire-community</groupId>
     <artifactId>compatibility-api-java</artifactId>
-    <version>1.0.1</version>
+    <version>1.0.2</version>
 </dependency>
 ```
 ## Usage
