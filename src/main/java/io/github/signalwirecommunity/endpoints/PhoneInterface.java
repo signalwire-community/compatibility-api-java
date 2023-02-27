@@ -1,5 +1,6 @@
 package io.github.signalwirecommunity.endpoints;
 
+import io.github.signalwirecommunity.exceptions.SignalWireException;
 import io.github.signalwirecommunity.model.SuccessResponse;
 import io.github.signalwirecommunity.model.phone.NumberResponse;
 import io.github.signalwirecommunity.model.phone.PhoneNumber;
@@ -19,13 +20,13 @@ public interface PhoneInterface {
 
     NumberResponse getLocalNumbers(String isoCountry);
 
-    PhoneNumber createPhoneNumber(String areaCode, String phoneNumber);
+    PhoneNumber createPhoneNumber(String areaCode, String phoneNumber) throws SignalWireException;
 
-    PhoneNumber createPhoneNumber(String areaCode, String phoneNumber, String statusCallBack, String friendlyName);
+    PhoneNumber createPhoneNumber(String areaCode, String phoneNumber, String statusCallBack, String friendlyName) throws SignalWireException;
 
-    PhoneNumber update(String sid, String smsUrl, String voiceUrl);
+    PhoneNumber update(String sid, String smsUrl, String voiceUrl) throws SignalWireException;
 
-    PhoneNumber transferPhoneNumber(String sid, String accountId);
+    PhoneNumber transferPhoneNumber(String sid, String accountId) throws SignalWireException;
 
     SuccessResponse deletePhone(String sid);
 

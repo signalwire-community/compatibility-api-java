@@ -4,6 +4,10 @@ import com.google.gson.Gson;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
+import com.mashape.unirest.http.exceptions.UnirestException;
+import io.github.signalwirecommunity.exceptions.ApiException;
+import io.github.signalwirecommunity.exceptions.SignalWireException;
+import io.github.signalwirecommunity.http.HttpClient;
 import io.github.signalwirecommunity.http.constants.Constant;
 import io.github.signalwirecommunity.endpoints.XMLInterface;
 import io.github.signalwirecommunity.http.RestClient;
@@ -11,6 +15,10 @@ import io.github.signalwirecommunity.model.SuccessResponse;
 import io.github.signalwirecommunity.model.laml.Bin;
 import io.github.signalwirecommunity.model.laml.LamlResponse;
 import okhttp3.*;
+import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class LamlRepository implements XMLInterface {
 
@@ -41,13 +49,9 @@ public class LamlRepository implements XMLInterface {
 
         try {
 
-            Request request = new Request.Builder()
-                    .url(this.baseUrl)
-                    .get()
-                    .addHeader(Constant.ACCEPT, Constant.HEADER)
-                    .build();
+            HttpResponse<JsonNode> client = HttpClient.getClient(this.baseUrl, this.projectId, this.apiToken);
 
-            String response = this.client.getClient().newCall(request).execute().body().string();
+            String response = client.getBody().toString();
 
             return gson.fromJson(response, LamlResponse.class);
 
@@ -69,18 +73,12 @@ public class LamlRepository implements XMLInterface {
 
         try {
 
-            HttpUrl.Builder urlBuilder = HttpUrl.parse(this.baseUrl).newBuilder()
-                    .addQueryParameter("Name", friendlyName);
+            Map<String, Object> params = new HashMap<>();
+            params.put("Name", friendlyName);
 
-            String url = urlBuilder.build().toString();
+            HttpResponse<JsonNode> client = HttpClient.getClient(this.baseUrl, this.projectId, this.apiToken, params);
 
-            Request request = new Request.Builder()
-                    .url(url)
-                    .get()
-                    .addHeader(Constant.ACCEPT, Constant.HEADER)
-                    .build();
-
-            String response = this.client.getClient().newCall(request).execute().body().string();
+            String response = client.getBody().toString();
 
             return gson.fromJson(response, LamlResponse.class);
 
@@ -93,30 +91,27 @@ public class LamlRepository implements XMLInterface {
     /**
      * Create an XML bin
      */
-    public Bin create(String name, String contents) {
+    public Bin create(String name, String contents) throws SignalWireException {
 
         try {
+            Map<String, Object> formData = new HashMap<>();
+            formData.put("Name", name);
+            formData.put("Contents", contents);
 
-            RequestBody formData = new FormBody.Builder()
-                    .add("Name", name)
-                    .add("Contents", contents)
-                    .build();
+            HttpResponse<JsonNode> request = HttpClient.postClient(baseUrl, this.projectId, this.apiToken, formData);
 
-            Request request = new Request.Builder()
-                    .url(this.baseUrl)
-                    .post(formData)
-                    .addHeader(Constant.ACCEPT, Constant.HEADER)
-                    .addHeader(Constant.CONTENT, Constant.FORM_TYPE)
-                    .build();
+            String response = request.getBody().toString();
 
-            String response = this.client.getClient().newCall(request).execute().body().string();
-            return gson.fromJson(response, Bin.class);
+            if (request.getStatus() >= 200 && request.getStatus() <= 204) {
+                return gson.fromJson(response, Bin.class);
+            } else {
+                ApiException error = gson.fromJson(response, ApiException.class);
+                throw new SignalWireException(error.getCode(), error.getMessage(), error.getMore_info(), error.getStatus());
+            }
 
-        } catch (Exception exception) {
-            exception.printStackTrace();
+        } catch (UnirestException exception) {
+            throw new RuntimeException(exception);
         }
-
-        return null;
     }
 
     /**
@@ -130,13 +125,8 @@ public class LamlRepository implements XMLInterface {
             HttpUrl.Builder urlBuilder = HttpUrl.parse(this.baseUrl).newBuilder()
                     .addPathSegment(sid);
             String url = urlBuilder.build().toString();
-            Request request = new Request.Builder()
-                    .url(url)
-                    .get()
-                    .addHeader(Constant.ACCEPT, Constant.HEADER)
-                    .build();
-            String response = this.client.getClient().newCall(request).execute().body().string();
-
+            HttpResponse<JsonNode> client = HttpClient.getClient(url, this.projectId, this.apiToken);
+            String response = client.getBody().toString();
             return gson.fromJson(response, Bin.class);
 
         } catch (Exception exception) {
@@ -149,40 +139,33 @@ public class LamlRepository implements XMLInterface {
     /**
      * Update an XML by ID
      *
-     * @param sid unique SID for the bin
-     * @param name friendly name of the created bin
+     * @param sid      unique SID for the bin
+     * @param name     friendly name of the created bin
      * @param contents full contents and xml values of the bin
      * @return Bin
      */
     @Override
-    public Bin update(String sid, String name, String contents) {
+    public Bin update(String sid, String name, String contents) throws SignalWireException {
 
         try {
-            HttpUrl.Builder urlBuilder = HttpUrl.parse(this.baseUrl).newBuilder()
-                    .addPathSegment(sid);
-            String url = urlBuilder.build().toString();
+            Map<String, Object> formData = new HashMap<>();
+            formData.put("Name", name);
+            formData.put("Contents", contents);
 
-            RequestBody formData = new FormBody.Builder()
-                    .add("Name", name)
-                    .add("Contents", contents)
-                    .build();
+            HttpResponse<JsonNode> request = HttpClient.postClient(baseUrl, this.projectId, this.apiToken, formData);
 
-            Request request = new Request.Builder()
-                    .url(url)
-                    .post(formData)
-                    .addHeader(Constant.ACCEPT, Constant.HEADER)
-                    .addHeader(Constant.CONTENT, Constant.FORM_TYPE)
-                    .build();
+            String response = request.getBody().toString();
 
-            String response = this.client.getClient().newCall(request).execute().body().string();
+            if (request.getStatus() >= 200 && request.getStatus() <= 204) {
+                return gson.fromJson(response, Bin.class);
+            } else {
+                ApiException error = gson.fromJson(response, ApiException.class);
+                throw new SignalWireException(error.getCode(), error.getMessage(), error.getMore_info(), error.getStatus());
+            }
 
-            return gson.fromJson(response, Bin.class);
-
-        } catch (Exception exception) {
-            exception.printStackTrace();
+        } catch (UnirestException exception) {
+            throw new RuntimeException(exception);
         }
-
-        return null;
     }
 
     /**
@@ -195,17 +178,12 @@ public class LamlRepository implements XMLInterface {
     public SuccessResponse delete(String sid) {
 
         try {
-
-
             HttpUrl.Builder urlBuilder = HttpUrl.parse(baseUrl).newBuilder()
                     .addPathSegment(sid);
 
             String url = urlBuilder.build().toString();
 
-            HttpResponse<JsonNode> response = Unirest.delete(url)
-                    .header("Accept", "application/json")
-                    .basicAuth(this.projectId, this.apiToken)
-                    .asJson();
+            HttpResponse<JsonNode> response = HttpClient.deleteClient(url, this.projectId, this.apiToken);
 
             if (response.getStatus() == 204) {
                 return new SuccessResponse(true);
@@ -215,7 +193,6 @@ public class LamlRepository implements XMLInterface {
         } catch (Exception exception) {
             exception.printStackTrace();
         }
-
         return null;
     }
 

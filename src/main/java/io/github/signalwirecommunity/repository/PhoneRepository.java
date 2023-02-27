@@ -4,6 +4,10 @@ import com.google.gson.Gson;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
+import com.mashape.unirest.http.exceptions.UnirestException;
+import io.github.signalwirecommunity.exceptions.ApiException;
+import io.github.signalwirecommunity.exceptions.SignalWireException;
+import io.github.signalwirecommunity.http.HttpClient;
 import io.github.signalwirecommunity.model.SuccessResponse;
 import io.github.signalwirecommunity.endpoints.PhoneInterface;
 import io.github.signalwirecommunity.http.RestClient;
@@ -14,6 +18,10 @@ import okhttp3.FormBody;
 import okhttp3.HttpUrl;
 import okhttp3.Request;
 import okhttp3.RequestBody;
+import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class PhoneRepository implements PhoneInterface {
 
@@ -49,13 +57,9 @@ public class PhoneRepository implements PhoneInterface {
     public PhoneResponse getPhoneNumbers() {
 
         try {
-            Request request = new Request.Builder()
-                    .url(this.baseUrl)
-                    .get()
-                    .addHeader("Accept", "application/json")
-                    .build();
+            HttpResponse<JsonNode> client = HttpClient.getClient(this.baseUrl, this.projectId, this.apiToken);
 
-            String response = this.client.getClient().newCall(request).execute().body().string();
+            String response = client.getBody().toString();
 
             return gson.fromJson(response, PhoneResponse.class);
 
@@ -75,18 +79,13 @@ public class PhoneRepository implements PhoneInterface {
     public PhoneResponse getPhoneNumbers(String friendlyName) {
 
         try {
-            HttpUrl.Builder urlBuilder = HttpUrl.parse(this.baseUrl).newBuilder()
-                    .addQueryParameter("FriendlyName", friendlyName);
 
-            String url = urlBuilder.build().toString();
+            Map<String, Object> params = new HashMap<>();
+            params.put("FriendlyName", friendlyName);
 
-            Request request = new Request.Builder()
-                    .url(url)
-                    .get()
-                    .addHeader("Accept", "application/json")
-                    .build();
+            HttpResponse<JsonNode> client = HttpClient.getClient(baseUrl, this.projectId, this.apiToken, params);
 
-            String response = this.client.getClient().newCall(request).execute().body().string();
+            String response = client.getBody().toString();
 
             return gson.fromJson(response, PhoneResponse.class);
 
@@ -106,18 +105,12 @@ public class PhoneRepository implements PhoneInterface {
     @Override
     public PhoneResponse getPhoneNumber(String phoneNumber) {
         try {
-            HttpUrl.Builder urlBuilder = HttpUrl.parse(this.baseUrl).newBuilder()
-                    .addQueryParameter("PhoneNumber", phoneNumber);
+            Map<String, Object> params = new HashMap<>();
+            params.put("PhoneNumber", phoneNumber);
 
-            String url = urlBuilder.build().toString();
+            HttpResponse<JsonNode> client = HttpClient.getClient(this.baseUrl, this.projectId, this.apiToken, params);
 
-            Request request = new Request.Builder()
-                    .url(url)
-                    .get()
-                    .addHeader("Accept", "application/json")
-                    .build();
-
-            String response = this.client.getClient().newCall(request).execute().body().string();
+            String response = client.getBody().toString();
 
             return gson.fromJson(response, PhoneResponse.class);
 
@@ -142,11 +135,7 @@ public class PhoneRepository implements PhoneInterface {
 
             String url = urlBuilder.build().toString();
 
-            HttpResponse<JsonNode> response = Unirest.put(url)
-                    .basicAuth(this.projectId, this.apiToken)
-                    .header("Accept", "application/json")
-                    .header("Content-Type", "application/x-www-form-urlencoded")
-                    .asJson();
+            HttpResponse<JsonNode> response = HttpClient.getClient(url, this.projectId, this.apiToken);
 
             String data = response.getBody().toString();
 
@@ -174,13 +163,9 @@ public class PhoneRepository implements PhoneInterface {
 
             String url = urlBuilder.build().toString();
 
-            Request request = new Request.Builder()
-                    .url(url)
-                    .get()
-                    .addHeader("Accept", "application/json")
-                    .build();
+            HttpResponse<JsonNode> client = HttpClient.getClient(url, this.projectId, this.apiToken);
 
-            String response = this.client.getClient().newCall(request).execute().body().string();
+            String response = client.getBody().toString();
 
             return gson.fromJson(response, NumberResponse.class);
 
@@ -206,13 +191,9 @@ public class PhoneRepository implements PhoneInterface {
 
             String url = urlBuilder.build().toString();
 
-            Request request = new Request.Builder()
-                    .url(url)
-                    .get()
-                    .addHeader("Accept", "application/json")
-                    .build();
+            HttpResponse<JsonNode> client = HttpClient.getClient(url, this.projectId, this.apiToken);
 
-            String response = this.client.getClient().newCall(request).execute().body().string();
+            String response = client.getBody().toString();
             return gson.fromJson(response, NumberResponse.class);
 
         } catch (Exception exception) {
@@ -224,84 +205,82 @@ public class PhoneRepository implements PhoneInterface {
     /**
      * Create a new phone number by providing the areaCode and phoneNumber
      *
-     * @param areaCode areaCode of the phone number
+     * @param areaCode    areaCode of the phone number
      * @param phoneNumber value of the phone number to purchase
      * @return PhoneNumber
      */
     @Override
-    public PhoneNumber createPhoneNumber(String areaCode, String phoneNumber) {
+    public PhoneNumber createPhoneNumber(String areaCode, String phoneNumber) throws SignalWireException {
 
         try {
 
-            RequestBody formData = new FormBody.Builder()
-                    .add("AreaCode", areaCode)
-                    .add("PhoneNumber", phoneNumber)
-                    .build();
+            HashMap<String, Object> form = new HashMap<>();
 
-            Request request = new Request.Builder()
-                    .url(this.baseUrl)
-                    .post(formData)
-                    .addHeader("Accept", "application/json")
-                    .addHeader("Content-Type", "application/x-www-form-urlencoded")
-                    .build();
+            form.put("AreaCode", areaCode);
+            form.put("PhoneNumber", phoneNumber);
 
-            String response = this.client.getClient().newCall(request).execute().body().string();
-            return gson.fromJson(response, PhoneNumber.class);
+            HttpResponse<JsonNode> request = HttpClient.postClient(this.baseUrl, this.projectId, this.apiToken, form);
 
-        } catch (Exception exception) {
-            exception.printStackTrace();
+            if (request.getStatus() >= 200 && request.getStatus() <= 204) {
+                String response = request.getBody().toString();
+                return gson.fromJson(response, PhoneNumber.class);
+            } else {
+                ApiException exception = gson.fromJson(request.getBody().toString(), ApiException.class);
+                throw new SignalWireException(exception.getCode(), exception.getMessage(), exception.getMore_info(), exception.getStatus());
+            }
+
+        } catch (UnirestException exception) {
+            throw new RuntimeException(exception);
         }
 
-        return null;
     }
 
     /**
      * Create a phone number by adding additional params like statusCallback, statuscallbackMethod
      *
-     * @param areaCode areaCode of the phone number
-     * @param phoneNumber value of the phone number to purchase
+     * @param areaCode       areaCode of the phone number
+     * @param phoneNumber    value of the phone number to purchase
      * @param statusCallBack statuscallback link for progress in phone call
      * @return
      */
     @Override
-    public PhoneNumber createPhoneNumber(String areaCode, String phoneNumber, String statusCallBack, String friendlyName) {
+    public PhoneNumber createPhoneNumber(String areaCode, String phoneNumber, String statusCallBack, String friendlyName) throws SignalWireException {
 
         try {
 
-            RequestBody formData = new FormBody.Builder()
-                    .add("AreaCode", areaCode)
-                    .add("PhoneNumber", phoneNumber)
-                    .add("StatusCallback", statusCallBack)
-                    .add("FriendlyName", friendlyName)
-                    .build();
+            Map<String, Object> formData = new HashMap<>();
+            formData.put("AreaCode", areaCode);
+            formData.put("PhoneNumber", phoneNumber);
+            formData.put("StatusCallback", statusCallBack);
+            formData.put("FriendlyName", friendlyName);
 
-            Request request = new Request.Builder()
-                    .url(this.baseUrl)
-                    .post(formData)
-                    .addHeader("Accept", "application/json")
-                    .addHeader("Content-Type", "application/x-www-form-urlencoded")
-                    .build();
+            HttpResponse<JsonNode> request = HttpClient.postClient(this.baseUrl, this.projectId, this.apiToken, formData);
 
-            String response = this.client.getClient().newCall(request).execute().body().string();
-            System.out.println(response);
-            return gson.fromJson(response, PhoneNumber.class);
 
-        } catch (Exception exception) {
-            exception.printStackTrace();
+            if (request.getStatus() >= 200 && request.getStatus() <= 204) {
+                String response = request.getBody().toString();
+                return gson.fromJson(response, PhoneNumber.class);
+            } else {
+                ApiException exception = gson.fromJson(request.getBody().toString(), ApiException.class);
+                throw new SignalWireException(exception.getCode(), exception.getMessage(), exception.getMore_info(), exception.getStatus());
+            }
+
+
+        } catch (UnirestException exception) {
+            throw new RuntimeException(exception);
         }
-        return null;
     }
 
     /**
      * Update a phone number by SID and make changes to the SMS url and voice URL
      *
-     * @param sid unique SID for the phone call
-     * @param smsUrl SMS url information
+     * @param sid      unique SID for the phone call
+     * @param smsUrl   SMS url information
      * @param voiceUrl Voice url information
      * @return
      */
     @Override
-    public PhoneNumber update(String sid, String smsUrl, String voiceUrl) {
+    public PhoneNumber update(String sid, String smsUrl, String voiceUrl) throws SignalWireException {
         try {
 
             HttpUrl.Builder urlBuilder = HttpUrl.parse(this.baseUrl).newBuilder()
@@ -309,37 +288,35 @@ public class PhoneRepository implements PhoneInterface {
 
             String url = urlBuilder.build().toString();
 
-            RequestBody formData = new FormBody.Builder()
-                    .add("SmsUrl", smsUrl)
-                    .add("VoiceUrl", voiceUrl)
-                    .build();
+            Map<String, Object> data = new HashMap<>();
+            data.put("SmsUrl", smsUrl);
+            data.put("VoiceUrl", voiceUrl);
 
-            HttpResponse<JsonNode> response = Unirest.put(url)
-                    .header("Accept", "application/json")
-                    .header("Content-Type", "application/x-www-form-urlencoded")
-                    .basicAuth(this.projectId, this.apiToken)
-                    .body("{ \"SmsUrl\":" + smsUrl +", \"VoiceUrl\":" +voiceUrl+ "}")
-                    .asJson();
+            HttpResponse<JsonNode> client = HttpClient.postClient(url, this.projectId, this.apiToken, data);
 
-            String data = response.getBody().toString();
+            String response = client.getBody().toString();
 
-            return gson.fromJson(data, PhoneNumber.class);
+            if (client.getStatus() >= 200 && client.getStatus() <= 204) {
+                return gson.fromJson(response, PhoneNumber.class);
+            } else {
+                ApiException exception = gson.fromJson(response, ApiException.class);
+                throw new SignalWireException(exception.getCode(), exception.getMessage(), exception.getMore_info(), exception.getStatus());
+            }
 
-        } catch (Exception exception) {
-            exception.printStackTrace();
+        } catch (UnirestException exception) {
+            throw new RuntimeException(exception);
         }
-        return null;
     }
 
     /**
      * Transfer a phone number from one space ID to another
      *
-     * @param sid unique SID for the phone call
+     * @param sid       unique SID for the phone call
      * @param accountId unique id for the project from your space
      * @return PhoneNumber
      */
     @Override
-    public PhoneNumber transferPhoneNumber(String sid, String accountId) {
+    public PhoneNumber transferPhoneNumber(String sid, String accountId) throws SignalWireException {
         try {
 
             HttpUrl.Builder urlBuilder = HttpUrl.parse(this.baseUrl).newBuilder()
@@ -347,25 +324,22 @@ public class PhoneRepository implements PhoneInterface {
 
             String url = urlBuilder.build().toString();
 
-            RequestBody formData = new FormBody.Builder()
-                    .add("AccountSid", accountId)
-                    .build();
+            Map<String, Object> form = new HashMap<>();
+            form.put("AccountSid", accountId);
 
-            Request request = new Request.Builder()
-                    .url(url)
-                    .post(formData)
-                    .addHeader("Accept", "application/json")
-                    .addHeader("Content-Type", "application/x-www-form-urlencoded")
-                    .build();
+            HttpResponse<JsonNode> client = HttpClient.postClient(url, this.projectId, this.apiToken, form);
 
-            String response = this.client.getClient().newCall(request).execute().body().string();
+            String response = client.getBody().toString();
 
-            return gson.fromJson(response, PhoneNumber.class);
-
-        } catch (Exception exception) {
-            exception.printStackTrace();
+            if (client.getStatus() >= 200 && client.getStatus() <= 204) {
+                return gson.fromJson(response, PhoneNumber.class);
+            } else {
+                ApiException exception = gson.fromJson(response, ApiException.class);
+                throw new SignalWireException(exception.getCode(), exception.getMessage(), exception.getMore_info(), exception.getStatus());
+            }
+        } catch (UnirestException exception) {
+            throw new RuntimeException(exception);
         }
-        return null;
     }
 
     /**
@@ -377,17 +351,12 @@ public class PhoneRepository implements PhoneInterface {
     @Override
     public SuccessResponse deletePhone(String sid) {
         try {
-
             HttpUrl.Builder urlBuilder = HttpUrl.parse(baseUrl).newBuilder()
                     .addPathSegment(sid);
 
             String url = urlBuilder.build().toString();
 
-            HttpResponse<JsonNode> response = Unirest.delete(url)
-                    .header("Accept", "application/json")
-                    .basicAuth(this.projectId, this.apiToken)
-                    .asJson();
-
+            HttpResponse<JsonNode> response = HttpClient.deleteClient(url, this.projectId, this.apiToken);
             if (response.getStatus() == 204) {
                 return new SuccessResponse(true);
             } else {
