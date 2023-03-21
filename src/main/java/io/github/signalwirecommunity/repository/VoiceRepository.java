@@ -4,7 +4,11 @@ import com.google.gson.Gson;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
+import com.mashape.unirest.http.exceptions.UnirestException;
 import io.github.signalwirecommunity.endpoints.VoiceInterface;
+import io.github.signalwirecommunity.exceptions.ApiException;
+import io.github.signalwirecommunity.exceptions.SignalWireException;
+import io.github.signalwirecommunity.http.HttpClient;
 import io.github.signalwirecommunity.http.RestClient;
 import io.github.signalwirecommunity.http.constants.Constant;
 import io.github.signalwirecommunity.model.SuccessResponse;
@@ -13,18 +17,17 @@ import io.github.signalwirecommunity.model.call.CallFilter;
 import io.github.signalwirecommunity.model.call.CallResponse;
 import io.github.signalwirecommunity.model.call.VoiceBuilder;
 import okhttp3.HttpUrl;
-import okhttp3.Request;
 
-import java.util.Map;
+import java.util.Objects;
 
 public class VoiceRepository implements VoiceInterface {
 
-    private String projectId;
-    private String apiToken;
+    private final String projectId;
+    private final String apiToken;
     private String spaceUrl;
-    private RestClient client;
-    private String baseUrl;
-    private Gson gson;
+    private final RestClient client;
+    private final String baseUrl;
+    private final Gson gson;
 
     public VoiceRepository(String projectId, String apiToken, String spaceUrl) {
         this.projectId = projectId;
@@ -41,20 +44,17 @@ public class VoiceRepository implements VoiceInterface {
      */
     @Override
     public CallResponse calls() {
+
+        HttpResponse<JsonNode> client = null;
+
         try {
-            Request request = new Request.Builder()
-                    .url(baseUrl)
-                    .get()
-                    .build();
+            client = HttpClient.getClient(baseUrl, this.projectId, this.apiToken);
+            String response = client.getBody().toString();
 
-            String response = client.getClient().newCall(request).execute().body().string();
             return gson.fromJson(response, CallResponse.class);
-
-        } catch (Exception exception) {
-            exception.printStackTrace();
+        } catch (UnirestException e) {
+            throw new RuntimeException(e);
         }
-
-        return null;
     }
 
     /**
@@ -67,17 +67,9 @@ public class VoiceRepository implements VoiceInterface {
     public CallResponse calls(CallFilter filter) {
 
         try {
-
-            HttpResponse<JsonNode> client = Unirest.get(baseUrl)
-                    .basicAuth(this.projectId, this.apiToken)
-                    .header("Accept", "application/json")
-                    .queryString(filter.response)
-                    .asJson();
-
+            HttpResponse<JsonNode> client = HttpClient.getClient(baseUrl, projectId, apiToken, filter.response);
             String response = client.getBody().toString();
-
             return gson.fromJson(response, CallResponse.class);
-
         } catch (Exception exception) {
             exception.printStackTrace();
             return null;
@@ -90,31 +82,24 @@ public class VoiceRepository implements VoiceInterface {
      * @return Call
      */
     @Override
-    public Call create(VoiceBuilder builder) {
+    public Call create(VoiceBuilder builder) throws SignalWireException {
 
         String response;
-
         try {
-            HttpResponse<JsonNode> request = Unirest.post(baseUrl)
-                    .basicAuth(projectId, apiToken)
-                    .header(Constant.ACCEPT, Constant.HEADER)
-                    .header(Constant.CONTENT, Constant.FORM_TYPE)
-                    .fields(builder.getResponse())
-                    .asJson();
 
-            int status = request.getStatus();
-
-            response = request.getBody().toString();
+            HttpResponse<JsonNode> client = HttpClient.postClient(baseUrl, projectId, apiToken, builder.getResponse());
+            int status = client.getStatus();
+            response = client.getBody().toString();
 
             if (status >= 200 && status <= 204) {
                 return gson.fromJson(response, Call.class);
+            } else {
+                ApiException error = gson.fromJson(response, ApiException.class);
+                throw new SignalWireException(error.getCode(), error.getMessage(), error.getMore_info(), error.getStatus());
             }
-
-        } catch (Exception exception) {
-            exception.printStackTrace();
-            return null;
+        } catch (UnirestException e) {
+            throw new RuntimeException(e);
         }
-        return null;
     }
 
     /**
@@ -133,12 +118,9 @@ public class VoiceRepository implements VoiceInterface {
 
             String url = builder.build().toString();
 
-            HttpResponse<JsonNode> response = Unirest.get(url)
-                    .header("Accept", "application/json")
-                    .basicAuth(this.projectId, this.apiToken)
-                    .asJson();
+            HttpResponse<JsonNode> client = HttpClient.getClient(url, projectId, apiToken);
 
-            String body = response.getBody().toString();
+            String body = client.getBody().toString();
 
             return gson.fromJson(body, io.github.signalwirecommunity.model.call.Call.class);
 
@@ -157,33 +139,25 @@ public class VoiceRepository implements VoiceInterface {
      * @return Call
      */
     @Override
-    public Call update(String sid, VoiceBuilder callInfo) {
+    public Call update(String sid, VoiceBuilder callInfo) throws SignalWireException {
 
         String response;
 
         try {
-
             String url = baseUrl + "/" + sid;
-
-            HttpResponse<JsonNode> request = Unirest.post(url)
-                    .basicAuth(projectId, apiToken)
-                    .header(Constant.CONTENT, Constant.FORM_TYPE)
-                    .header(Constant.ACCEPT, Constant.HEADER)
-                    .fields(callInfo.getResponse())
-                    .asJson();
-
-            int status = request.getStatus();
-
-            response = request.getBody().toString();
+            HttpResponse<JsonNode> client = HttpClient.postClient(url, projectId, apiToken, callInfo.getResponse());
+            int status = client.getStatus();
+            response = client.getBody().toString();
 
             if (status >= 200 && status <= 204) {
                 return gson.fromJson(response, Call.class);
+            } else {
+                ApiException error = gson.fromJson(response, ApiException.class);
+                throw new SignalWireException(error.getCode(), error.getMessage(), error.getMore_info(), error.getStatus());
             }
-
-        } catch (Exception exception) {
-            exception.printStackTrace();
+        }catch (UnirestException unirestException){
+            throw new RuntimeException(unirestException);
         }
-        return null;
     }
 
     /**
@@ -196,17 +170,14 @@ public class VoiceRepository implements VoiceInterface {
     public SuccessResponse delete(String sid) {
         try {
 
-            HttpUrl.Builder urlBuilder = HttpUrl.parse(baseUrl).newBuilder()
+            HttpUrl.Builder urlBuilder = Objects.requireNonNull(HttpUrl.parse(baseUrl)).newBuilder()
                     .addPathSegment(sid);
 
             String url = urlBuilder.build().toString();
 
-            HttpResponse<JsonNode> response = Unirest.delete(url)
-                    .header("Accept", "application/json")
-                    .basicAuth(this.projectId, this.apiToken)
-                    .asJson();
+            HttpResponse<JsonNode> client = HttpClient.deleteClient(url, projectId, apiToken);
 
-            if (response.getStatus() == 204) {
+            if (client.getStatus() == 204) {
                 return new SuccessResponse(true);
             } else {
                 return new SuccessResponse(false);

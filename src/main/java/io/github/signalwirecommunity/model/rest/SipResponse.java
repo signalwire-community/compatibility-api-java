@@ -1,16 +1,15 @@
 package io.github.signalwirecommunity.model.rest;
 
+import lombok.Data;
+
 import java.util.List;
 
+@Data
 public class SipResponse {
     public Links links;
     public List<Sip> data;
 
-    public SipResponse(Links links, List<Sip> data) {
-        this.links = links;
-        this.data = data;
-    }
-
+    @Data
     static public class Sip{
         public String id;
         public String username;
@@ -21,15 +20,5 @@ public class SipResponse {
         public String encryption;
         public String type;
 
-        public Sip(String id, String username, String caller_id, String send_as, List<String> ciphers, List<String> codecs, String encryption, String type) {
-            this.id = id;
-            this.username = username;
-            this.caller_id = caller_id;
-            this.send_as = send_as;
-            this.ciphers = ciphers;
-            this.codecs = codecs;
-            this.encryption = encryption;
-            this.type = type;
-        }
     }
 }
